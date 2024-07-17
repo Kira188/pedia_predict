@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "938935710446",
+    "project_id": "flutter-pedia",
+    "storage_bucket": "flutter-pedia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:938935710446:android:4e2f7775537067733d39ff",
+        "android_client_info": {
+          "package_name": "com.example.pedia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQalP2WYe8SQsykquungQz9G8yufvbUk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:938935710446:android:b116f9942d6f55e33d39ff",
+        "android_client_info": {
+          "package_name": "com.example.pedia_predict"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQalP2WYe8SQsykquungQz9G8yufvbUk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
