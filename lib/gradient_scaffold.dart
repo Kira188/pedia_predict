@@ -8,7 +8,7 @@ class GradientScaffold extends StatelessWidget {
   const GradientScaffold({
     super.key,
     required this.body,
-    this.showBackButton = false,
+    this.showBackButton = true,
     this.appBarText = "Pedia Predict",
   });
 
@@ -68,11 +68,14 @@ class GradientScaffold extends StatelessWidget {
                   Positioned(
                     top: 90.0, // Adjust this value to position the back button
                     left: 16.0,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
                   ),
               ],

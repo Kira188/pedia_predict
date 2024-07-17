@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
 import 'package:pedia_predict/image_question.dart';
-import 'package:pedia_predict/psss/psss_habits.dart';
 import 'package:pedia_predict/utils/database_helper.dart';
 import 'package:pedia_predict/questions_screen.dart';
 
@@ -9,12 +8,13 @@ class PsssResult extends StatelessWidget {
   final int score;
   final int habitType;
   final DatabaseHelper dbHelper;
-
+  final String appBarText;
   const PsssResult({
     super.key,
     required this.score,
     required this.habitType,
     required this.dbHelper,
+    required this.appBarText,
   });
 
   @override
@@ -23,7 +23,7 @@ class PsssResult extends StatelessWidget {
     String risk;
     switch (habitType) {
       case 0:
-        resultTitle = 'Physical Activity Result';
+        resultTitle = 'Physical Activity';
         if (score >= 0 && score <= 44) {
           risk = 'High Risk';
         } else {
@@ -31,7 +31,7 @@ class PsssResult extends StatelessWidget {
         }
         break;
       case 1:
-        resultTitle = 'Sedentary Habits Result';
+        resultTitle = 'Sedentary Habits';
         if (score >= 0 && score <= 14) {
           risk = 'Low Risk';
         } else {
@@ -39,7 +39,7 @@ class PsssResult extends StatelessWidget {
         }
         break;
       case 2:
-        resultTitle = 'Sedentary Habits Two Result';
+        resultTitle = 'Mental Health And Wellbeing';
         if (score >= 0 && score <= 8) {
           risk = 'Low Risk';
         } else {
@@ -47,7 +47,7 @@ class PsssResult extends StatelessWidget {
         }
         break;
       case 3:
-        resultTitle = 'Sleeping Habits Result';
+        resultTitle = 'Sleeping Habits';
         if (score >= 0 && score <= 9) {
           risk = 'Low Risk';
         } else {
@@ -55,19 +55,22 @@ class PsssResult extends StatelessWidget {
         }
         break;
       case 4:
-      resultTitle = 'Eating Habits Result';
-      if (score >= 0 && score <= 20) {
+        resultTitle = 'Eating Habits';
+        if (score >= 0 && score <= 20) {
           risk = 'Low Risk';
         } else {
           risk = 'High Risk';
         }
+        break;
       default:
         resultTitle = 'Result';
         risk = '404: Risk Not Found';
     }
 
+    _saveResultsToDatabase(resultTitle, score, risk);
+
     return GradientScaffold(
-      appBarText: resultTitle,
+      appBarText: appBarText,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +92,7 @@ class PsssResult extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            PsssHabits(habitType: 1, dbHelper: dbHelper),
+                            QuestionsScreen(pageTitle: 'Physical Activity', startIndex: 21, endIndex: 29, dbHelper: dbHelper),
                       ),
                     );
                   } else if (habitType == 1) {
@@ -97,6 +100,7 @@ class PsssResult extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => QuestionsScreen(
+                          pageTitle: 'Mental Health\nAnd Wellbeing',
                             startIndex: 16, endIndex: 18, dbHelper: dbHelper),
                       ),
                     );
@@ -104,7 +108,7 @@ class PsssResult extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ImageQuestion(dbHelper: dbHelper),
+                        builder: (context) => ImageQuestion(ver: 1,dbHelper: dbHelper),
                       ),
                     );
                   } else if (habitType == 4) {
@@ -112,6 +116,7 @@ class PsssResult extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (context) =>
                          QuestionsScreen(
+                          pageTitle: "Physical Activity",
                           startIndex: 12,
                           endIndex: 15,
                           dbHelper: dbHelper,
@@ -132,6 +137,22 @@ class PsssResult extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _saveResultsToDatabase(String resultTitle, int score, String risk) async {
+    int sdcId = await dbHelper.getLatestSdcId(); // Retrieve the latest student ID or use a specific ID
+
+    await dbHelper.insertRemainingTableQuestion(
+      sdcId,
+      '$resultTitle: score',
+      score.toString(),
+    );
+
+    await dbHelper.insertRemainingTableQuestion(
+      sdcId,
+      '$resultTitle: risk',
+      risk,
     );
   }
 }

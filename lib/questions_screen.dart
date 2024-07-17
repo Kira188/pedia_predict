@@ -1,22 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:pedia_predict/data/questions_data.dart';
 import 'package:pedia_predict/home_page.dart';
 import 'package:pedia_predict/models/questions_model.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
 import 'package:pedia_predict/utils/database_helper.dart';
-//import 'package:pedia_predict/eating/eating_habits.dart';
 import 'package:pedia_predict/psss/psss_habits.dart';
 
 class QuestionsScreen extends StatefulWidget {
   final int startIndex;
   final int endIndex;
   final DatabaseHelper dbHelper;
-
+  final pageTitle;
   const QuestionsScreen({
-    super.key,
+    required this.pageTitle,
     required this.startIndex,
     required this.endIndex,
     required this.dbHelper,
+    super.key,
   });
 
   @override
@@ -31,10 +33,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   void initState() {
     super.initState();
-    textAnswers.clear();
-    dropdownAnswers.clear();
     initializeAnswers();
   }
+
   void initializeAnswers() async {
     textAnswers.clear();
     dropdownAnswers.clear();
@@ -80,44 +81,57 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       await widget.dbHelper.insertSdcQuestion(latestSdcId, entry.key, entry.value);
     }
 
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Data has been saved successfully!'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        if (widget.startIndex == 0) {
-                          return PsssHabits(habitType: 4, dbHelper: widget.dbHelper);
-                        } else if (widget.startIndex == 12) {
-                          return PsssHabits(habitType: 0, dbHelper: widget.dbHelper);
-                        } else if (widget.startIndex == 16) {
-                          return PsssHabits(habitType: 2, dbHelper: widget.dbHelper);
-                        } else if (widget.startIndex == 19) {
-                          return PsssHabits(habitType: 3, dbHelper: widget.dbHelper);
-                        } else {
-                          return HomePage(dbHelper: widget.dbHelper);
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
+    // Use mounted check to guard against context usage
+    if (mounted) {
+      // Directly navigate based on the startIndex
+      if (widget.startIndex == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PsssHabits(habitType: 4, dbHelper: widget.dbHelper),
+          ),
+        );
+      } else if (widget.startIndex == 12) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PsssHabits(habitType: 0, dbHelper: widget.dbHelper),
+          ),
+        );
+      } else if (widget.startIndex == 16) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PsssHabits(habitType: 2, dbHelper: widget.dbHelper),
+          ),
+        );
+      } else if (widget.startIndex == 19) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PsssHabits(habitType: 3, dbHelper: widget.dbHelper),
+          ),
+        );
+      } else if (widget.startIndex == 21){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => 
+        PsssHabits(habitType: 1, dbHelper: widget.dbHelper),
+        ),
+        );
+      }
+      else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(dbHelper: widget.dbHelper),
+          ),
+        );
+      }
     }
 
+    // Clear answers after saving
     textAnswers.clear();
     dropdownAnswers.clear();
   }
@@ -177,7 +191,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      appBarText: 'SDQ Page',
+      appBarText: widget.pageTitle,
       body: Column(
         children: [
           Expanded(

@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      showBackButton: false, // Turn off back button
+      showBackButton: false,
       appBarText: "Pedia Predict",
       body: SafeArea(
         child: LayoutBuilder(

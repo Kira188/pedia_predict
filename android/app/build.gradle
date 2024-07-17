@@ -31,6 +31,7 @@ if (flutterVersionName == null) {
 }
 
 android {
+    compileSdkVersion 33
     namespace = "com.example.pedia_predict"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -46,6 +47,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
        minSdkVersion 23
+       targetSdkVersion 33
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName

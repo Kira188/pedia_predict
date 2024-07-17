@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
+import 'package:pedia_predict/home_page.dart';
 import 'package:pedia_predict/utils/database_helper.dart';
-import 'package:pedia_predict/questions_screen.dart';
 
 class EatingResult extends StatelessWidget {
   final int eatingScore;
@@ -32,11 +32,7 @@ class EatingResult extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return QuestionsScreen(
-                    startIndex: 12,
-                    endIndex: 15,
-                    dbHelper: dbHelper,
-                  );
+                  return HomePage(dbHelper: dbHelper);
                 }));
               },
               child: const Text(

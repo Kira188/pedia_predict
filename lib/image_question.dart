@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
+import 'package:pedia_predict/home_page.dart';
 import 'package:pedia_predict/utils/database_helper.dart';
 import 'package:pedia_predict/questions_screen.dart';
 
 class ImageQuestion extends StatefulWidget {
-  const ImageQuestion({super.key, required this.dbHelper});
+  const ImageQuestion({super.key, required this.dbHelper, required this.ver});
   final DatabaseHelper dbHelper;
+  final int ver;
 
   @override
   State<StatefulWidget> createState() => _ImageQuestionState();
@@ -13,9 +15,21 @@ class ImageQuestion extends StatefulWidget {
 
 class _ImageQuestionState extends State<ImageQuestion> {
   int? _selectedRating;
+  String questionText = 'None';
 
   @override
   Widget build(BuildContext context) {
+    switch (widget.ver) {
+      case 1:
+        questionText =
+            'Please rate your Current Body Perception of your body image';
+            break;
+      case 2:
+        questionText =
+            'Please rate your Desired Body Perception of your body image';
+            break;
+      default: HomePage(dbHelper: widget.dbHelper);
+    }
     return GradientScaffold(
       appBarText: 'Figure Scale Rating',
       body: SingleChildScrollView(
@@ -27,16 +41,18 @@ class _ImageQuestionState extends State<ImageQuestion> {
                   'lib/assets/ratingscale.png', // Ensure you have this image in your assets folder.
                   width: 800.0),
             ),
-            const Text(
-              'Please rate your Current Body Perception of your body image',
-              style: TextStyle(fontSize: 18),
+            Text(
+              questionText,
+              style: const TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: GridView.builder(
-                shrinkWrap: true, // Ensures GridView takes only the necessary space
-                physics: const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
+                shrinkWrap:
+                    true, // Ensures GridView takes only the necessary space
+                physics:
+                    const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 10,
@@ -85,21 +101,37 @@ class _ImageQuestionState extends State<ImageQuestion> {
                     debugPrint("Selected rating: $selectedRating");
 
                     // Get the latest student ID
-                    final int latestSdcId = await widget.dbHelper.getLatestSdcId();
+                    final int latestSdcId =
+                        await widget.dbHelper.getLatestSdcId();
 
                     // Insert the rating into the database
                     await widget.dbHelper.insertSdcQuestion(
                       latestSdcId,
-                      'Figure Rating',
+                      questionText,
                       selectedRating.toString(),
                     );
-                  if (context.mounted){
-                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {return QuestionsScreen(startIndex: 19, endIndex: 20, dbHelper: widget.dbHelper);}));
-                    
-                  }} else {
+                    if (context.mounted) {
+                      if (widget.ver == 1) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return ImageQuestion(dbHelper: widget.dbHelper, ver: 2);
+                        }));
+                      }
+                     else if (widget.ver == 2) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return QuestionsScreen(
+                            pageTitle: 'Sleep Quality',
+                              startIndex: 19,
+                              endIndex: 20,
+                              dbHelper: widget.dbHelper);
+                        }));
+                      }
+                      
+                    } else{
+                      HomePage(dbHelper: widget.dbHelper);
+                    }
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Please select a rating')),
                     );

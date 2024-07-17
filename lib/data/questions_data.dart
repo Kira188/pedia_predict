@@ -83,6 +83,7 @@ final List<QuizQuestion> questions = [
       ),
     ],
   ),
+  //question 11
   const QuizQuestion(
     text: 'Is anybody in the family suffering from thyroid dysfunction?',
     dropdownAnswers: ['Yes', 'No', 'Don’t know'],
@@ -97,7 +98,7 @@ final List<QuizQuestion> questions = [
       ),
     ],
   ),
-  // Additional Questions
+  // question 12
   const QuizQuestion(
     text: 'How many days per week do you have Physical Training (PT) classes at school/college?',
     dropdownAnswers: [
@@ -124,6 +125,7 @@ final List<QuizQuestion> questions = [
       ),
     ],
   ),
+  //question 15
   const QuizQuestion(
     text: 'Are you involved in any of the following activities in your school/college?',
     dropdownAnswers: ['Scouts and Guides', 'NCC', 'Others', 'None'],
@@ -134,6 +136,7 @@ final List<QuizQuestion> questions = [
       ],
      // To allow user to specify 'Others'
   ),
+  //question 16
   const QuizQuestion(
     text: 'How do you describe your weight?',
     dropdownAnswers: [
@@ -160,11 +163,12 @@ final List<QuizQuestion> questions = [
     text: 'At what time do you usually go to bed?',
     textAnswer: true,
   ),
+  //question 20
   const QuizQuestion(
     text: 'What is the usual time of getting up from the bed?',
     textAnswer: true,
   ),
-
+ // question 21
   //Added Questions for physical 9 questions
   const QuizQuestion(
     text: 'On ONE of those days, how long does the activity last? \n Dance',
@@ -198,6 +202,7 @@ final List<QuizQuestion> questions = [
     text: 'Self (Bicycle)',
     textAnswer: true,
   ),
+  //question 29
   const QuizQuestion(
     text: 'Walking',
     textAnswer: true,

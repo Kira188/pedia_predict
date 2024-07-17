@@ -20,6 +20,7 @@ class PsssHabits extends StatefulWidget {
 }
 
 class _PsssHabitsState extends State<PsssHabits> {
+  late String _habitTitle;
   late dynamic _data;
   late List<dynamic> _categoryValues;
   late List<String> _categoryNames;
@@ -31,6 +32,7 @@ class _PsssHabitsState extends State<PsssHabits> {
     super.initState();
     switch (widget.habitType) {
       case 0:
+        _habitTitle = "Physical Activity";
         _data = PhysicalData();
         _categoryValues = PhysicalCategory.values;
         _categoryNames = physicalCategoryNames;
@@ -38,6 +40,7 @@ class _PsssHabitsState extends State<PsssHabits> {
         _calculatedScore = () => (_data as PhysicalData).calculatedPhysicalScore;
         break;
       case 1:
+        _habitTitle = "Sedentary Lifestyle";
         _data = SedentaryData();
         _categoryValues = SedentaryCategory.values;
         _categoryNames = sedentaryCategoryNames;
@@ -45,6 +48,7 @@ class _PsssHabitsState extends State<PsssHabits> {
         _calculatedScore = () => (_data as SedentaryData).calculatedSedentaryScore;
         break;
       case 2:
+        _habitTitle = "Mental Health\nAnd Wellbeing";
         _data = SedentaryDataTwo();
         _categoryValues = SedentaryCategoryTwo.values;
         _categoryNames = sedentaryCategoryNamesTwo;
@@ -52,6 +56,7 @@ class _PsssHabitsState extends State<PsssHabits> {
         _calculatedScore = () => (_data as SedentaryDataTwo).calculatedSedentaryScore;
         break;
       case 3:
+        _habitTitle = "Sleep Quality";
         _data = SleepingData();
         _categoryValues = SleepingCategory.values;
         _categoryNames = sleepingCategoryNames;
@@ -59,6 +64,7 @@ class _PsssHabitsState extends State<PsssHabits> {
         _calculatedScore = () => (_data as SleepingData).calculatedSleepingScore;
         break;
       case 4:
+      _habitTitle = "Eating Habits";
         _data = EatingData();
         _categoryValues = EatingCategory.values;
         _categoryNames = eatingCategoryNames;
@@ -106,14 +112,27 @@ class _PsssHabitsState extends State<PsssHabits> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PsssResult(score: totalScore, habitType: widget.habitType, dbHelper: widget.dbHelper),
+        builder: (context) => PsssResult(appBarText: _habitTitle,score: totalScore, habitType: widget.habitType, dbHelper: widget.dbHelper),
       ),
     );
+  }
+  void _validateAndSubmit() async {
+    if ((_data as dynamic).choices.values.contains(null)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select all options before submitting.'),
+        ),
+      );
+    } else {
+      await _savePsssHabits();
+      _showResultScreen();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
+      appBarText: _habitTitle,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -155,10 +174,7 @@ class _PsssHabitsState extends State<PsssHabits> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: () async {
-                await _savePsssHabits();
-                _showResultScreen();
-              },
+              onPressed: _validateAndSubmit,
               child: const Text('Submit'),
             ),
           ),

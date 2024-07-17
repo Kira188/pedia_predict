@@ -150,6 +150,8 @@ class _SdcPageState extends State<SdcPage> {
                   Navigator.of(context).pop();
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return QuestionsScreen(
+                      pageTitle: "Part A",
+                      //ends at Is anybody in the family suffering from thyroid dysfunction
                         startIndex: 0, endIndex: 11, dbHelper: widget.dbHelper);
                   }));
                 },

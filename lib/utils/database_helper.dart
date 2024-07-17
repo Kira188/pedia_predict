@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:excel/excel.dart';
 import 'package:pedia_predict/models/sdc_model.dart';
-
+import 'package:share/share.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -137,7 +137,6 @@ class DatabaseHelper {
 //   });
 // }
 
-
 //   Future<int> insertRemainingTableQuestion(int sdcId, String question, String answer) async {
 //   Database db = await database;
 
@@ -155,7 +154,7 @@ class DatabaseHelper {
 //     'answer': answer,
 //   });
 // }
-Future<int> insertSdcModel(SdcModel sdcModel) async {
+  Future<int> insertSdcModel(SdcModel sdcModel) async {
     Database db = await database;
     return await db.insert(
       'student',
@@ -164,7 +163,8 @@ Future<int> insertSdcModel(SdcModel sdcModel) async {
     );
   }
 
-  Future<int> insertSdcQuestion(int sdcId, String question, String answer) async {
+  Future<int> insertSdcQuestion(
+      int sdcId, String question, String answer) async {
     Database db = await database;
     return await db.insert(
       'questions',
@@ -177,7 +177,8 @@ Future<int> insertSdcModel(SdcModel sdcModel) async {
     );
   }
 
-  Future<int> insertEatingHabit(int sdcId, String question, String answer) async {
+  Future<int> insertEatingHabit(
+      int sdcId, String question, String answer) async {
     Database db = await database;
     return await db.insert(
       'eating_questions',
@@ -190,7 +191,8 @@ Future<int> insertSdcModel(SdcModel sdcModel) async {
     );
   }
 
-  Future<int> insertRemainingTableQuestion(int sdcId, String question, String answer) async {
+  Future<int> insertRemainingTableQuestion(
+      int sdcId, String question, String answer) async {
     Database db = await database;
     return await db.insert(
       'remaining_table_questions',
@@ -261,93 +263,75 @@ Future<int> insertSdcModel(SdcModel sdcModel) async {
   }
 
   Future<void> exportDatabaseToExcel() async {
-    final db = await database;
+  final db = await database;
 
-    // Create a new Excel document
-    var excel = Excel.createExcel();
+  // Create a new Excel document
+  var excel = Excel.createExcel();
 
-    // Export student table
-    var studentSheet = excel['Student'];
-    List<Map<String, dynamic>> studentData = await db.query('student');
-    if (studentData.isNotEmpty) {
+  // Export student table
+  var studentSheet = excel['Student'];
+  List<Map<String, dynamic>> studentData = await db.query('student');
+  if (studentData.isNotEmpty) {
+    studentSheet.appendRow(
+        studentData.first.keys.map((key) => TextCellValue(key)).toList());
+    for (var row in studentData) {
       studentSheet.appendRow(
-          studentData.first.keys.map((key) => TextCellValue(key)).toList());
-      for (var row in studentData) {
-        studentSheet.appendRow(row.values
-            .map((value) => TextCellValue(value.toString()))
-            .toList());
-      }
-    }
-
-    // Export questions table
-    var questionsSheet = excel['Questions'];
-    List<Map<String, dynamic>> questionsData = await db.query('questions');
-    if (questionsData.isNotEmpty) {
-      questionsSheet.appendRow(
-          questionsData.first.keys.map((key) => TextCellValue(key)).toList());
-      for (var row in questionsData) {
-        questionsSheet.appendRow(row.values
-            .map((value) => TextCellValue(value.toString()))
-            .toList());
-      }
-    }
-
-    // Export eating_questions table
-    var eatingQuestionsSheet = excel['Eating Questions'];
-    List<Map<String, dynamic>> eatingQuestionsData =
-        await db.query('eating_questions');
-    if (eatingQuestionsData.isNotEmpty) {
-      eatingQuestionsSheet.appendRow(eatingQuestionsData.first.keys
-          .map((key) => TextCellValue(key))
-          .toList());
-      for (var row in eatingQuestionsData) {
-        eatingQuestionsSheet.appendRow(row.values
-            .map((value) => TextCellValue(value.toString()))
-            .toList());
-      }
-    }
-
-    // Export remaining_table_questions table
-    var remainingTableSheet = excel['Remaining Table Questions'];
-    List<Map<String, dynamic>> remainingTableData =
-        await db.query('remaining_table_questions');
-    if (remainingTableData.isNotEmpty) {
-      remainingTableSheet.appendRow(remainingTableData.first.keys
-          .map((key) => TextCellValue(key))
-          .toList());
-      for (var row in remainingTableData) {
-        remainingTableSheet.appendRow(row.values
-            .map((value) => TextCellValue(value.toString()))
-            .toList());
-      }
-    }
-
-    // Get the appropriate directory for saving the file
-    Directory? directory;
-    try {
-      if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      } else {
-        directory = Directory('/storage/emulated/0/Download');
-        if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
-        }
-      }
-    } catch (err) {
-      debugPrint("Cannot get download folder path: $err");
-    }
-
-    if (directory != null) {
-      String filePath = '${directory.path}/sdc_database.xlsx';
-      List<int>? fileBytes = excel.save();
-      if (fileBytes != null) {
-        await File(filePath).writeAsBytes(fileBytes);
-        debugPrint('Database e  xported to Excel at $filePath');
-      } else {
-        debugPrint('Failed to save Excel file.');
-      }
-    } else {
-      debugPrint('Failed to get the downloads directory.');
+          row.values.map((value) => TextCellValue(value.toString())).toList());
     }
   }
+
+  // Export questions table
+  var questionsSheet = excel['Questions'];
+  List<Map<String, dynamic>> questionsData = await db.query('questions');
+  if (questionsData.isNotEmpty) {
+    questionsSheet.appendRow(
+        questionsData.first.keys.map((key) => TextCellValue(key)).toList());
+    for (var row in questionsData) {
+      questionsSheet.appendRow(
+          row.values.map((value) => TextCellValue(value.toString())).toList());
+    }
+  }
+
+  // Export eating_questions table
+  var eatingQuestionsSheet = excel['Eating Questions'];
+  List<Map<String, dynamic>> eatingQuestionsData =
+      await db.query('eating_questions');
+  if (eatingQuestionsData.isNotEmpty) {
+    eatingQuestionsSheet.appendRow(eatingQuestionsData.first.keys
+        .map((key) => TextCellValue(key))
+        .toList());
+    for (var row in eatingQuestionsData) {
+      eatingQuestionsSheet.appendRow(
+          row.values.map((value) => TextCellValue(value.toString())).toList());
+    }
+  }
+
+  // Export remaining_table_questions table
+  var remainingTableSheet = excel['Remaining Table Questions'];
+  List<Map<String, dynamic>> remainingTableData =
+      await db.query('remaining_table_questions');
+  if (remainingTableData.isNotEmpty) {
+    remainingTableSheet.appendRow(remainingTableData.first.keys
+        .map((key) => TextCellValue(key))
+        .toList());
+    for (var row in remainingTableData) {
+      remainingTableSheet.appendRow(
+          row.values.map((value) => TextCellValue(value.toString())).toList());
+    }
+  }
+
+  // Get the path to the documents directory
+  Directory directory = await getApplicationDocumentsDirectory();
+  String filePath = '${directory.path}/sdc_database.xlsx';
+  List<int>? fileBytes = excel.save();
+  if (fileBytes != null) {
+    File file = File(filePath)..writeAsBytesSync(fileBytes);
+    debugPrint('Database exported to Excel at $filePath');
+
+    // Share the file
+    Share.shareFiles([file.path], text: 'Check out this database export!');
+  } else {
+    debugPrint('Failed to save Excel file.');
+  }
+}
 }
