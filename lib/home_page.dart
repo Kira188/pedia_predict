@@ -7,9 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {
   final DatabaseHelper dbHelper;
-
   const HomePage({super.key, required this.dbHelper});
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -30,10 +28,11 @@ class HomePage extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           debugPrint("New Student Add Tap");
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return SdcPage(dbHelper: dbHelper);
-                          }));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SdcPage(dbHelper: dbHelper)));
                         },
                         child: Card(
                           color: const Color.fromARGB(255, 238, 198, 150),
@@ -140,7 +139,10 @@ class HomePage extends StatelessWidget {
                           debugPrint("Logout Tap");
                           await FirebaseAuth.instance.signOut();
                           if (context.mounted) {
-                            Navigator.of(context).pushReplacementNamed('/login');
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/login',
+                              (Route<dynamic> route) => false,
+                            );
                           }
                         },
                         child: Card(

@@ -39,19 +39,19 @@ class EatingData {
     int score = 0;
     for (String frequency in choices.values) {
       switch (frequency) {
-        case 'Never':
+        case '0':
           score += 0;
           break;
-        case 'Rarely':
+        case '1':
           score += 1;
           break;
-        case 'Sometimes':
+        case '2':
           score += 2;
           break;
-        case 'Often':
+        case '3':
           score += 3;
           break;
-        case 'Almost Always':
+        case '4':
           score += 4;
           break;
       }
@@ -104,21 +104,21 @@ class PhysicalData {
   int get calculatedPhysicalScore {
     int score = 0;
     for (String frequency in choices.values) {
-      if (frequency == 'Never') {
+      if (frequency == '0') {
         score += 0;
-      } else if (frequency == '1 day') {
+      } else if (frequency == '1') {
         score += 1;
-      } else if (frequency == '2 days') {
+      } else if (frequency == '2') {
         score += 2;
-      } else if (frequency == '3 days') {
+      } else if (frequency == '3') {
         score += 3;
-      } else if (frequency == '4 days') {
+      } else if (frequency == '4') {
         score += 4;
-      } else if (frequency == '5 days') {
+      } else if (frequency == '5') {
         score += 5;
-      } else if (frequency == '6 days') {
+      } else if (frequency == '6') {
         score += 6;
-      } else if (frequency == '7 days') {
+      } else if (frequency == '7') {
         score += 7;
       } 
     }
@@ -164,19 +164,19 @@ class SedentaryData {
     int score = 0;
     for (String frequency in choices.values) {
       switch (frequency) {
-        case 'Never':
+        case '0':
           score += 0;
           break;
-        case '< 1 Hr/ Day':
+        case '1':
           score += 1;
           break;
-        case '1 - 2 Hrs/Day':
+        case '2':
           score += 2;
           break;
-        case '2 - 3 Hrs/ Day':
+        case '3':
           score += 3;
           break;
-        case '>3 Hrs/ Day':
+        case '4':
           score += 4;
           break;
       }
@@ -225,19 +225,19 @@ class SedentaryDataTwo {
     int score = 0;
     for (String frequency in choices.values) {
       switch (frequency) {
-        case 'Never':
+        case '0':
           score += 0;
           break;
-        case 'Rarely':
+        case '1':
           score += 1;
           break;
-        case 'Sometimes':
+        case '2':
           score += 2;
           break;
-        case 'Often':
+        case '3':
           score += 3;
           break;
-        case 'Almost Always':
+        case '4':
           score += 4;
           break;
       }
@@ -288,19 +288,19 @@ class SleepingData {
     int score = 0;
     for (String frequency in choices.values) {
       switch (frequency) {
-        case 'Never':
+        case '0':
           score += 0;
           break;
-        case 'Rarely':
+        case '1':
           score += 1;
           break;
-        case 'Sometimes':
+        case '2':
           score += 2;
           break;
-        case 'Often':
+        case '3':
           score += 3;
           break;
-        case 'Almost Always':
+        case '4':
           score += 4;
           break;
       }

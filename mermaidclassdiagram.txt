@@ -1,0 +1,470 @@
+classDiagram
+class PsssResult
+PsssResult : +score int
+PsssResult : +habitType int
+PsssResult : +dbHelper DatabaseHelper
+PsssResult o-- DatabaseHelper
+PsssResult : +appBarText String
+PsssResult : +build() Widget
+PsssResult : -_saveResultsToDatabase() void
+StatelessWidget <|-- PsssResult
+
+class PsssChoice
+PsssChoice : +category dynamic
+PsssChoice : +frequencyOptions List~String~
+PsssChoice : +createState() State<StatefulWidget>
+StatefulWidget <|-- PsssChoice
+
+class _PsssChoiceState
+_PsssChoiceState : -_selectedFrequency String?
+_PsssChoiceState : +build() Widget
+State <|-- _PsssChoiceState
+
+class PsssHabits
+PsssHabits : +habitType int
+PsssHabits : +dbHelper DatabaseHelper
+PsssHabits o-- DatabaseHelper
+PsssHabits : +createState() State<StatefulWidget>
+StatefulWidget <|-- PsssHabits
+
+class _PsssHabitsState
+_PsssHabitsState : -_habitTitle String
+_PsssHabitsState : -_data dynamic
+_PsssHabitsState : -_categoryValues List~dynamic~
+_PsssHabitsState : -_categoryNames List~String~
+_PsssHabitsState : -_frequencyOptions List~dynamic~
+_PsssHabitsState : -_calculatedScore Function
+_PsssHabitsState : +initState() void
+_PsssHabitsState : -_openChoiceOverlay() void
+_PsssHabitsState : -_savePsssHabits() dynamic
+_PsssHabitsState : -_showResultScreen() void
+_PsssHabitsState : -_validateAndSubmit() void
+_PsssHabitsState : +build() Widget
+State <|-- _PsssHabitsState
+
+class GradientScaffold
+GradientScaffold : +body Widget
+GradientScaffold o-- Widget
+GradientScaffold : +showBackButton bool
+GradientScaffold : +appBarText String
+GradientScaffold : +build() Widget
+StatelessWidget <|-- GradientScaffold
+
+class SignUpPage
+SignUpPage : +dbHelper DatabaseHelper
+SignUpPage o-- DatabaseHelper
+SignUpPage : +build() Widget
+StatelessWidget <|-- SignUpPage
+
+class AuthPage
+AuthPage : +createState() State<AuthPage>
+StatefulWidget <|-- AuthPage
+
+class _AuthPageState
+_AuthPageState : -_form GlobalKey~FormState~
+_AuthPageState o-- GlobalKey~FormState~
+_AuthPageState : -_isLogin bool
+_AuthPageState : -_enteredEmail String
+_AuthPageState : -_enteredPassword String
+_AuthPageState : -_enteredUsername String
+_AuthPageState : -_isAuthenticating bool
+_AuthPageState : -_isForgotPassword bool
+_AuthPageState : -_submit() void
+_AuthPageState : -_toggleMode() void
+_AuthPageState : -_forgotPassword() void
+_AuthPageState : +build() Widget
+State <|-- _AuthPageState
+
+class LoginPage
+LoginPage : +dbHelper DatabaseHelper
+LoginPage o-- DatabaseHelper
+LoginPage : +createState() State<StatefulWidget>
+StatefulWidget <|-- LoginPage
+
+class _LoginPageState
+_LoginPageState : -_formKey GlobalKey~FormState~
+_LoginPageState o-- GlobalKey~FormState~
+_LoginPageState : -_obscureText bool
+_LoginPageState : -_rememberMe bool
+_LoginPageState : -_usernameController TextEditingController
+_LoginPageState o-- TextEditingController
+_LoginPageState : -_passwordController TextEditingController
+_LoginPageState o-- TextEditingController
+_LoginPageState : -_submit() dynamic
+_LoginPageState : +dispose() void
+_LoginPageState : +build() Widget
+State <|-- _LoginPageState
+
+class ForgotPasswordPage
+ForgotPasswordPage : +dbHelper DatabaseHelper
+ForgotPasswordPage o-- DatabaseHelper
+ForgotPasswordPage : +build() Widget
+StatelessWidget <|-- ForgotPasswordPage
+
+class DefaultFirebaseOptions
+DefaultFirebaseOptions : +android$ FirebaseOptions
+DefaultFirebaseOptions o-- FirebaseOptions
+DefaultFirebaseOptions : +ios$ FirebaseOptions
+DefaultFirebaseOptions o-- FirebaseOptions
+DefaultFirebaseOptions : +currentPlatform$ FirebaseOptions
+DefaultFirebaseOptions o-- FirebaseOptions
+
+class DatabaseHelper
+DatabaseHelper : -_instance$ DatabaseHelper
+DatabaseHelper o-- DatabaseHelper
+DatabaseHelper : -_database$ Database?
+DatabaseHelper o-- Database
+DatabaseHelper : +database dynamic
+DatabaseHelper : -_initDatabase() dynamic
+DatabaseHelper : -_onCreate() dynamic
+DatabaseHelper : +insertSdcModel() dynamic
+DatabaseHelper : +insertSdcQuestion() dynamic
+DatabaseHelper : +insertEatingHabit() dynamic
+DatabaseHelper : +insertRemainingTableQuestion() dynamic
+DatabaseHelper : +deleteStudentById() dynamic
+DatabaseHelper : +deleteQuestionsBySdcId() dynamic
+DatabaseHelper : +deleteEatingQuestionsBySdcId() dynamic
+DatabaseHelper : +deleteRemainingTableQuestionsBySdcId() dynamic
+DatabaseHelper : +getTableData() dynamic
+DatabaseHelper : +getSdcCount() dynamic
+DatabaseHelper : +getLatestSdcId() dynamic
+DatabaseHelper : +exportDatabaseToExcel() dynamic
+
+class QuizQuestion
+QuizQuestion : +text String
+QuizQuestion : +dropdownAnswers List~String~
+QuizQuestion : +textAnswer bool
+QuizQuestion : +subQuestions List~QuizQuestion~
+
+class SdcModel
+SdcModel : +id int?
+SdcModel : +weight double
+SdcModel : +height double
+SdcModel : +age DateTime
+SdcModel : +gender String
+SdcModel : +schoolName String
+SdcModel : +fullName String
+SdcModel : +classSection String
+SdcModel : +address String
+SdcModel : +bmi double
+SdcModel : +riskFactor String
+SdcModel : +district String
+SdcModel : +taluk String
+SdcModel : +toMap() Map<String, dynamic>
+
+class EatingData
+EatingData : +choices Map~EatingCategory, String~
+EatingData : +calculatedEatingScore int
+
+class PhysicalData
+PhysicalData : +choices Map~PhysicalCategory, String~
+PhysicalData : +calculatedPhysicalScore int
+
+class SedentaryData
+SedentaryData : +choices Map~SedentaryCategory, String~
+SedentaryData : +calculatedSedentaryScore int
+
+class SedentaryDataTwo
+SedentaryDataTwo : +choices Map~SedentaryCategoryTwo, String~
+SedentaryDataTwo : +calculatedSedentaryScore int
+
+class SleepingData
+SleepingData : +choices Map~SleepingCategory, String~
+SleepingData : +calculatedSleepingScore int
+
+class EatingCategory
+<<enumeration>> EatingCategory
+EatingCategory : +index int
+EatingCategory : +values$ List~EatingCategory~
+EatingCategory : +cereals$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +pulsesAndLegumes$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +vegetables$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +fruits$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +milkAndMilkProducts$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +nonVegetarian$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +snacks$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +sweets$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +beverages$ EatingCategory
+EatingCategory o-- EatingCategory
+EatingCategory : +others$ EatingCategory
+EatingCategory o-- EatingCategory
+Enum <|.. EatingCategory
+
+class PhysicalCategory
+<<enumeration>> PhysicalCategory
+PhysicalCategory : +index int
+PhysicalCategory : +values$ List~PhysicalCategory~
+PhysicalCategory : +dance$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +swimming$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +yoga$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +exercise$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +indoor$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +outdoor$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +play$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +self$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+PhysicalCategory : +walking$ PhysicalCategory
+PhysicalCategory o-- PhysicalCategory
+Enum <|.. PhysicalCategory
+
+class SedentaryCategory
+<<enumeration>> SedentaryCategory
+SedentaryCategory : +index int
+SedentaryCategory : +values$ List~SedentaryCategory~
+SedentaryCategory : +tv$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+SedentaryCategory : +mobile$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+SedentaryCategory : +readingSchool$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+SedentaryCategory : +readingNonSchool$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+SedentaryCategory : +indoor$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+SedentaryCategory : +outdoor$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+SedentaryCategory : +tuition$ SedentaryCategory
+SedentaryCategory o-- SedentaryCategory
+Enum <|.. SedentaryCategory
+
+class SedentaryCategoryTwo
+<<enumeration>> SedentaryCategoryTwo
+SedentaryCategoryTwo : +index int
+SedentaryCategoryTwo : +values$ List~SedentaryCategoryTwo~
+SedentaryCategoryTwo : +walk$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +run$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +sports$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +attention$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +forget$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +studies$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +lonely$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+SedentaryCategoryTwo : +weight$ SedentaryCategoryTwo
+SedentaryCategoryTwo o-- SedentaryCategoryTwo
+Enum <|.. SedentaryCategoryTwo
+
+class SleepingCategory
+<<enumeration>> SleepingCategory
+SleepingCategory : +index int
+SleepingCategory : +values$ List~SleepingCategory~
+SleepingCategory : +falling$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +wakeUp$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +noise$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +wakeUp2$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +classes$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +headache$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +irritated$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +studies$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+SleepingCategory : +forget$ SleepingCategory
+SleepingCategory o-- SleepingCategory
+Enum <|.. SleepingCategory
+
+class EatingModel
+EatingModel : +choices Map~Category, Map~int, String~~
+EatingModel : +categoriesWithTextInput Set~Category~
+EatingModel : +calculatedEatingScore int
+
+class Category
+<<enumeration>> Category
+Category : +index int
+Category : +values$ List~Category~
+Category : +cereals$ Category
+Category o-- Category
+Category : +pulsesAndLegumes$ Category
+Category o-- Category
+Category : +vegetables$ Category
+Category o-- Category
+Category : +fruits$ Category
+Category o-- Category
+Category : +milkAndMilkProducts$ Category
+Category o-- Category
+Category : +nonVegetarian$ Category
+Category o-- Category
+Category : +snacks$ Category
+Category o-- Category
+Category : +sweets$ Category
+Category o-- Category
+Category : +beverages$ Category
+Category o-- Category
+Category : +others$ Category
+Category o-- Category
+Enum <|.. Category
+
+class QuestionsScreen
+QuestionsScreen : +startIndex int
+QuestionsScreen : +endIndex int
+QuestionsScreen : +dbHelper DatabaseHelper
+QuestionsScreen o-- DatabaseHelper
+QuestionsScreen : +pageTitle dynamic
+QuestionsScreen : +createState() State<StatefulWidget>
+StatefulWidget <|-- QuestionsScreen
+
+class _QuestionsScreenState
+_QuestionsScreenState : +textAnswers Map~String, String~
+_QuestionsScreenState : +dropdownAnswers Map~String, String~
+_QuestionsScreenState : +expandedQuestions Set~String~
+_QuestionsScreenState : +initState() void
+_QuestionsScreenState : +initializeAnswers() void
+_QuestionsScreenState : +handleDropdownAnswerChange() void
+_QuestionsScreenState : +handleTextAnswerChange() void
+_QuestionsScreenState : +saveAnswers() dynamic
+_QuestionsScreenState : +buildQuestion() Widget
+_QuestionsScreenState : +build() Widget
+State <|-- _QuestionsScreenState
+
+class DeleteStudent
+DeleteStudent : +dbHelper DatabaseHelper
+DeleteStudent o-- DatabaseHelper
+DeleteStudent : +createState() State<StatefulWidget>
+StatefulWidget <|-- DeleteStudent
+
+class _DeleteStudentState
+_DeleteStudentState : -_fetchStudents() dynamic
+_DeleteStudentState : -_onRemoveStudent() void
+_DeleteStudentState : -_confirmDelete() dynamic
+_DeleteStudentState : +build() Widget
+State <|-- _DeleteStudentState
+
+class MyApp
+MyApp : +build() Widget
+StatelessWidget <|-- MyApp
+
+class AuthWrapper
+AuthWrapper : +dbHelper DatabaseHelper
+AuthWrapper o-- DatabaseHelper
+AuthWrapper : +build() Widget
+StatelessWidget <|-- AuthWrapper
+
+class ImageQuestion
+ImageQuestion : +dbHelper DatabaseHelper
+ImageQuestion o-- DatabaseHelper
+ImageQuestion : +ver int
+ImageQuestion : +createState() State<StatefulWidget>
+StatefulWidget <|-- ImageQuestion
+
+class _ImageQuestionState
+_ImageQuestionState : -_selectedRating int?
+_ImageQuestionState : +questionText String
+_ImageQuestionState : +build() Widget
+State <|-- _ImageQuestionState
+
+class HomePage
+HomePage : +dbHelper DatabaseHelper
+HomePage o-- DatabaseHelper
+HomePage : +build() Widget
+StatelessWidget <|-- HomePage
+
+class SdcPage
+SdcPage : +dbHelper DatabaseHelper
+SdcPage o-- DatabaseHelper
+SdcPage : +createState() State<StatefulWidget>
+StatefulWidget <|-- SdcPage
+
+class _SdcPageState
+_SdcPageState : -_formKey GlobalKey~FormState~
+_SdcPageState o-- GlobalKey~FormState~
+_SdcPageState : -_weightController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_heightController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_ageController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_schoolNameController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_fullNameController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_classSectionController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_addressController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_talukController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_districtController TextEditingController
+_SdcPageState o-- TextEditingController
+_SdcPageState : -_gender String?
+_SdcPageState : -_selectedDate DateTime?
+_SdcPageState : -_sdcDataList List~SdcModel~
+_SdcPageState : +initState() void
+_SdcPageState : -_calculateAgeInMonths() int
+_SdcPageState : -_calculateRisk() String
+_SdcPageState : -_addSdcData() void
+_SdcPageState : -_presentDatepicker() void
+_SdcPageState : +dispose() void
+_SdcPageState : +build() Widget
+_SdcPageState : -_buildTextField() Widget
+State <|-- _SdcPageState
+
+class ContainerOne
+ContainerOne : +text1 String
+ContainerOne : +text2 String
+ContainerOne : +build() Widget
+StatelessWidget <|-- ContainerOne
+
+class SdcData
+SdcData : +maleMap$ Map~int, List~double~~
+SdcData : +femaleMap$ Map~int, List~double~~
+SdcData : -_parseCsvToMap()$ Map<int, List<double>>
+
+class EatingResult
+EatingResult : +eatingScore int
+EatingResult : +dbHelper DatabaseHelper
+EatingResult o-- DatabaseHelper
+EatingResult : +build() Widget
+StatelessWidget <|-- EatingResult
+
+class EatingHabits
+EatingHabits : +dbHelper DatabaseHelper
+EatingHabits o-- DatabaseHelper
+EatingHabits : +createState() State<StatefulWidget>
+StatefulWidget <|-- EatingHabits
+
+class _EatingHabitsState
+_EatingHabitsState : +eatingData EatingModel
+_EatingHabitsState o-- EatingModel
+_EatingHabitsState : -_openChoiceOverlay() void
+_EatingHabitsState : -_saveEatingHabits() dynamic
+_EatingHabitsState : -_showEatingResultScreen() void
+_EatingHabitsState : +build() Widget
+State <|-- _EatingHabitsState
+
+class EatingChoice
+EatingChoice : +category Category
+EatingChoice o-- Category
+EatingChoice : +createState() State<StatefulWidget>
+StatefulWidget <|-- EatingChoice
+
+class _EatingChoiceState
+_EatingChoiceState : -_selectedFrequencies Map~int, String~
+_EatingChoiceState : -_errorMessage String?
+_EatingChoiceState : +initState() void
+_EatingChoiceState : +build() Widget
+State <|-- _EatingChoiceState

@@ -111,6 +111,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
+      showBackButton: false,
       appBarText: "Pedia Predict",
       body: Center(
         child: SingleChildScrollView(

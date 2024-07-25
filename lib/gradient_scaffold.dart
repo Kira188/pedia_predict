@@ -66,7 +66,7 @@ class GradientScaffold extends StatelessWidget {
                 ),
                 if (showBackButton)
                   Positioned(
-                    top: 90.0, // Adjust this value to position the back button
+                    top: 106.0, // Adjust this value to position the back button
                     left: 16.0,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

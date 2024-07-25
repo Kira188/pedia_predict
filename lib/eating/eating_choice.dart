@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pedia_predict/models/eating_model.dart';
-import 'package:pedia_predict/data/eating_options.dart'; // Import the new file
+import 'package:pedia_predict/models/eating_model.dart';// Import the new file
 
 class EatingChoice extends StatefulWidget {
   final Category category; // Add this parameter

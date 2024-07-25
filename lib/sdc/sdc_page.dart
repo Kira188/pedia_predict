@@ -46,8 +46,9 @@ class _SdcPageState extends State<SdcPage> {
     }
 
     double dayFraction = (currentDate.day - birthDate.day) / 30.0;
-
-    return (years * 12 + months + dayFraction).floor();
+    int month = (years * 12 + months + dayFraction).floor();
+    debugPrint("Month is $month");
+    return month;
   }
 
   String _calculateRisk(
@@ -70,9 +71,9 @@ class _SdcPageState extends State<SdcPage> {
 
     List<double>? sdValues = genderMap[ageInMonths];
     if (sdValues != null) {
-      if (bmi > sdValues[6]) {
+      if (bmi >= sdValues[5]) {
         return 'Obese';
-      } else if (bmi <= sdValues[6] && bmi > 0) {
+      } else if (bmi < sdValues[5] && bmi > 0) {
         return 'Not Obese';
       } else {
         return 'Cannot Handle BMI';
@@ -122,19 +123,19 @@ class _SdcPageState extends State<SdcPage> {
 
     await widget.dbHelper.insertSdcModel(sdcData);
 
-    _weightController.clear();
-    _heightController.clear();
-    _ageController.clear();
-    _schoolNameController.clear();
-    _fullNameController.clear();
-    _classSectionController.clear();
-    _addressController.clear();
-    _talukController.clear();
-    _districtController.clear();
-    setState(() {
-      _gender = null;
-      _selectedDate = null;
-    });
+    // _weightController.clear();
+    // _heightController.clear();
+    // _ageController.clear();
+    // _schoolNameController.clear();
+    // _fullNameController.clear();
+    // _classSectionController.clear();
+    // _addressController.clear();
+    // _talukController.clear();
+    // _districtController.clear();
+    // setState(() {
+    //   _gender = null;
+    //   _selectedDate = null;
+    // });
     if (mounted) {
       showDialog(
         context: context,

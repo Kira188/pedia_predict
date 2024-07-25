@@ -77,24 +77,29 @@ class _PsssHabitsState extends State<PsssHabits> {
   }
 
   void _openChoiceOverlay(dynamic category) async {
-    List<String> frequencyOptions = _frequencyOptions as List<String>;
+  List<String> frequencyOptions = _frequencyOptions as List<String>;
 
-    final result = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => PsssChoice(
-        category: category,
-        frequencyOptions: frequencyOptions,
-      ),
-    );
+  // Ensure selectedFrequency is treated as a string representation of an index
+  String? selectedFrequency = (_data as dynamic).choices[category];
 
-    if (result != null) {
-      setState(() {
-        (_data as dynamic).choices[category] = result;
-      });
-      debugPrint('Selected Option for ${_categoryNames[_categoryValues.indexOf(category)]}: $result');
-    }
+  final result = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    builder: (ctx) => PsssChoice(
+      category: category,
+      frequencyOptions: frequencyOptions,
+      selectedFrequency: selectedFrequency, // This should be the index as a string
+    ),
+  );
+
+  if (result != null) {
+    setState(() {
+      (_data as dynamic).choices[category] = result; // Save the index as a string
+    });
+    debugPrint('Selected Option for ${_categoryNames[_categoryValues.indexOf(category)]}: $result');
   }
+}
+
 
   Future<void> _savePsssHabits() async {
     int latestSdcId = await widget.dbHelper.getLatestSdcId();

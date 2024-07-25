@@ -4,7 +4,6 @@ import 'package:pedia_predict/models/eating_model.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
 import 'package:pedia_predict/eating/eating_result.dart';
 import 'package:pedia_predict/utils/database_helper.dart';
-import 'package:pedia_predict/data/eating_options.dart';
 
 class EatingHabits extends StatefulWidget {
   final DatabaseHelper dbHelper;

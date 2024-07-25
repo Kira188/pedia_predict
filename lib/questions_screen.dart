@@ -12,7 +12,7 @@ class QuestionsScreen extends StatefulWidget {
   final int startIndex;
   final int endIndex;
   final DatabaseHelper dbHelper;
-  final pageTitle;
+  final String pageTitle;
   const QuestionsScreen({
     required this.pageTitle,
     required this.startIndex,
