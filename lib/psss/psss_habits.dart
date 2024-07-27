@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedia_predict/models/psss_data.dart';
 import 'package:pedia_predict/psss/psss_choice.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
 import 'package:pedia_predict/psss/psss_result.dart';
-import 'package:pedia_predict/utils/database_helper.dart';
+import 'package:pedia_predict/providers.dart';
 
-class PsssHabits extends StatefulWidget {
+class PsssHabits extends ConsumerStatefulWidget {
   final int habitType;
-  final DatabaseHelper dbHelper;
 
   const PsssHabits({
     super.key,
     required this.habitType,
-    required this.dbHelper,
   });
 
   @override
-  State<StatefulWidget> createState() => _PsssHabitsState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PsssHabitsState();
 }
 
-class _PsssHabitsState extends State<PsssHabits> {
+class _PsssHabitsState extends ConsumerState<PsssHabits> {
   late String _habitTitle;
   late dynamic _data;
   late List<dynamic> _categoryValues;
@@ -37,7 +36,8 @@ class _PsssHabitsState extends State<PsssHabits> {
         _categoryValues = PhysicalCategory.values;
         _categoryNames = physicalCategoryNames;
         _frequencyOptions = physicalFrequencyOptions;
-        _calculatedScore = () => (_data as PhysicalData).calculatedPhysicalScore;
+        _calculatedScore =
+            () => (_data as PhysicalData).calculatedPhysicalScore;
         break;
       case 1:
         _habitTitle = "Sedentary Lifestyle";
@@ -45,7 +45,8 @@ class _PsssHabitsState extends State<PsssHabits> {
         _categoryValues = SedentaryCategory.values;
         _categoryNames = sedentaryCategoryNames;
         _frequencyOptions = sedentaryFrequencyOptions;
-        _calculatedScore = () => (_data as SedentaryData).calculatedSedentaryScore;
+        _calculatedScore =
+            () => (_data as SedentaryData).calculatedSedentaryScore;
         break;
       case 2:
         _habitTitle = "Mental Health\nAnd Wellbeing";
@@ -53,7 +54,8 @@ class _PsssHabitsState extends State<PsssHabits> {
         _categoryValues = SedentaryCategoryTwo.values;
         _categoryNames = sedentaryCategoryNamesTwo;
         _frequencyOptions = sedentaryFrequencyOptionsTwo;
-        _calculatedScore = () => (_data as SedentaryDataTwo).calculatedSedentaryScore;
+        _calculatedScore =
+            () => (_data as SedentaryDataTwo).calculatedSedentaryScore;
         break;
       case 3:
         _habitTitle = "Sleep Quality";
@@ -61,10 +63,11 @@ class _PsssHabitsState extends State<PsssHabits> {
         _categoryValues = SleepingCategory.values;
         _categoryNames = sleepingCategoryNames;
         _frequencyOptions = sleepingFrequencyOptions;
-        _calculatedScore = () => (_data as SleepingData).calculatedSleepingScore;
+        _calculatedScore =
+            () => (_data as SleepingData).calculatedSleepingScore;
         break;
       case 4:
-      _habitTitle = "Eating Habits";
+        _habitTitle = "Eating Habits";
         _data = EatingData();
         _categoryValues = EatingCategory.values;
         _categoryNames = eatingCategoryNames;
@@ -75,67 +78,90 @@ class _PsssHabitsState extends State<PsssHabits> {
         throw Exception('Invalid habit type');
     }
   }
-
-  void _openChoiceOverlay(dynamic category) async {
-  List<String> frequencyOptions = _frequencyOptions as List<String>;
-
-  // Ensure selectedFrequency is treated as a string representation of an index
-  String? selectedFrequency = (_data as dynamic).choices[category];
-
-  final result = await showModalBottomSheet<String>(
-    context: context,
-    isScrollControlled: true,
-    builder: (ctx) => PsssChoice(
-      category: category,
-      frequencyOptions: frequencyOptions,
-      selectedFrequency: selectedFrequency, // This should be the index as a string
-    ),
-  );
-
-  if (result != null) {
-    setState(() {
-      (_data as dynamic).choices[category] = result; // Save the index as a string
-    });
-    debugPrint('Selected Option for ${_categoryNames[_categoryValues.indexOf(category)]}: $result');
+StateNotifierProvider<PsssHabitsNotifier, PsssHabitsState> _getProvider(int habitType) {
+    switch (habitType) {
+      case 0:
+        return physicalHabitsProvider;
+      case 1:
+        return sedentaryHabitsProvider;
+      case 2:
+        return mentalHabitsProvider;
+      case 3:
+        return sleepHabitsProvider;
+      case 4:
+        return eatingHabitsProvider;
+      default:
+        throw Exception('Invalid habit type');
+    }
   }
-}
+  void _openChoiceOverlay(dynamic category) async {
+    List<String> frequencyOptions = _frequencyOptions as List<String>;
+     final provider = _getProvider(widget.habitType);
+    final state = ref.read(provider);
+    String selectedFrequency = state.choices[category] ?? '0';
 
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
+      builder: (ctx) => PsssChoice(
+        category: category,
+        frequencyOptions: frequencyOptions,
+        selectedFrequency: selectedFrequency,
+      ),
+    );
+
+   if (result != null && mounted) {
+      ref.read(provider.notifier).setChoice(category, result);
+      _data.choices[category] = result;
+    }
+  }
 
   Future<void> _savePsssHabits() async {
-    int latestSdcId = await widget.dbHelper.getLatestSdcId();
+    final dbHelper = ref.read(databaseHelperProvider);
+    final provider = _getProvider(widget.habitType);
+    final state = ref.read(provider);
 
-    for (var entry in (_data as dynamic).choices.entries) {
+    int latestSdcId = await dbHelper.getLatestSdcId();
+
+    for (var entry in state.choices.entries) {
       String question = _categoryNames[_categoryValues.indexOf(entry.key)];
       String answer = entry.value;
-      await widget.dbHelper.insertRemainingTableQuestion(latestSdcId, question, answer);
+      await dbHelper.insertRemainingTableQuestion(
+          latestSdcId, question, answer);
+      _data.choices[entry.key] = answer;
     }
   }
 
   void _showResultScreen() {
     int totalScore = _calculatedScore();
-
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PsssResult(appBarText: _habitTitle,score: totalScore, habitType: widget.habitType, dbHelper: widget.dbHelper),
+        builder: (context) => PsssResult(
+          appBarText: _habitTitle,
+          score: totalScore,
+          habitType: widget.habitType,
+        ),
       ),
     );
   }
-  void _validateAndSubmit() async {
-    if ((_data as dynamic).choices.values.contains(null)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select all options before submitting.'),
-        ),
-      );
-    } else {
-      await _savePsssHabits();
-      _showResultScreen();
-    }
+
+  void _submit() async {
+    await _savePsssHabits();
+    _showResultScreen();
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = _getProvider(widget.habitType);
+    final state = ref.watch(provider);
+
     return GradientScaffold(
       appBarText: _habitTitle,
       body: Column(
@@ -158,7 +184,9 @@ class _PsssHabitsState extends State<PsssHabits> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        color: _data.choices[category] != null ? Colors.green : Colors.red,
+                        color: state.choices[category] != null
+                            ? Colors.green
+                            : Colors.red,
                         elevation: 4,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -179,7 +207,7 @@ class _PsssHabitsState extends State<PsssHabits> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
-              onPressed: _validateAndSubmit,
+              onPressed: _submit,
               child: const Text('Submit'),
             ),
           ),

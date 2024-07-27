@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PsssChoice extends StatefulWidget {
   final dynamic category;
   final List<String> frequencyOptions;
-  final String? selectedFrequency; // This will hold the index as a String
+  final String? selectedFrequency;
 
   const PsssChoice({
     super.key,
@@ -22,13 +22,15 @@ class _PsssChoiceState extends State<PsssChoice> {
   @override
   void initState() {
     super.initState();
-    _selectedFrequency = widget.selectedFrequency; // Set initial selected frequency
+    _selectedFrequency = widget.selectedFrequency ?? '0'; // Default to first option if null
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SizedBox(
+       height: MediaQuery.of(context).size.height * 0.5,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Padding(
             padding: EdgeInsets.all(32.0),
@@ -37,6 +39,7 @@ class _PsssChoiceState extends State<PsssChoice> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
+          
           Expanded(
             child: ListView.builder(
               itemCount: widget.frequencyOptions.length,

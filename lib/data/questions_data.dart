@@ -130,7 +130,7 @@ final List<QuizQuestion> questions = [
     text: 'Are you involved in any of the following activities in your school/college?',
     dropdownAnswers: ['Scouts and Guides', 'NCC', 'Others', 'None'],
      subQuestions: [ QuizQuestion(
-      text: 'specify',
+      text: 'Specify',
       textAnswer: true,
       ),
       ],

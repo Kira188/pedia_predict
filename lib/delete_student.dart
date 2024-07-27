@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
-import 'utils/database_helper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedia_predict/providers.dart';
 
-class DeleteStudent extends StatefulWidget {
-  const DeleteStudent({super.key, required this.dbHelper});
-  final DatabaseHelper dbHelper;
+class DeleteStudent extends ConsumerStatefulWidget {
+  const DeleteStudent({super.key});
 
   @override
-  State<StatefulWidget> createState() => _DeleteStudentState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _DeleteStudentState();
 }
 
-class _DeleteStudentState extends State<DeleteStudent> {
+class _DeleteStudentState extends ConsumerState<DeleteStudent> {
   Future<List<Map<String, dynamic>>> _fetchStudents() async {
-    return await widget.dbHelper.getTableData('student');
+    final dbHelper = ref.read(databaseHelperProvider);
+    return await dbHelper.getTableData('student');
   }
 
   void _onRemoveStudent(int id) async {
-    await widget.dbHelper.deleteStudentById(id);
+    final dbHelper = ref.read(databaseHelperProvider);
+    await dbHelper.deleteStudentById(id);
     setState(() {});
   }
 
@@ -81,7 +83,6 @@ class _DeleteStudentState extends State<DeleteStudent> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
-                      // Wrap ListTile with Card
                       color: const Color.fromARGB(255, 238, 198, 150), // Set desired card color
                       child: ListTile(
                         title: Text(student['fullName']),

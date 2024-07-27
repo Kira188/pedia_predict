@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-class GradientScaffold extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class GradientScaffold extends ConsumerWidget {
   final Widget body;
   final bool showBackButton;
   final String appBarText;
@@ -13,7 +13,7 @@ class GradientScaffold extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(150.0),

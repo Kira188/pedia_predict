@@ -4,25 +4,25 @@ set namespaceSeparator ::
 class "pedia_predict::psss::psss_result.dart::PsssResult" {
   +int score
   +int habitType
-  +DatabaseHelper dbHelper
   +String appBarText
   +Widget build()
   -void _saveResultsToDatabase()
 }
 
-"pedia_predict::psss::psss_result.dart::PsssResult" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::psss::psss_result.dart::PsssResult"
+"flutter_riverpod::src::consumer.dart::ConsumerWidget" <|-- "pedia_predict::psss::psss_result.dart::PsssResult"
 
 class "pedia_predict::psss::psss_choice.dart::PsssChoice" {
   +dynamic category
   +List<String> frequencyOptions
-  +State<StatefulWidget> createState()
+  +String? selectedFrequency
+  +State<PsssChoice> createState()
 }
 
 "flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::psss::psss_choice.dart::PsssChoice"
 
 class "pedia_predict::psss::psss_choice.dart::_PsssChoiceState" {
   -String? _selectedFrequency
+  +void initState()
   +Widget build()
 }
 
@@ -30,12 +30,10 @@ class "pedia_predict::psss::psss_choice.dart::_PsssChoiceState" {
 
 class "pedia_predict::psss::psss_habits.dart::PsssHabits" {
   +int habitType
-  +DatabaseHelper dbHelper
-  +State<StatefulWidget> createState()
+  +ConsumerState<ConsumerStatefulWidget> createState()
 }
 
-"pedia_predict::psss::psss_habits.dart::PsssHabits" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::psss::psss_habits.dart::PsssHabits"
+"flutter_riverpod::src::consumer.dart::ConsumerStatefulWidget" <|-- "pedia_predict::psss::psss_habits.dart::PsssHabits"
 
 class "pedia_predict::psss::psss_habits.dart::_PsssHabitsState" {
   -String _habitTitle
@@ -45,14 +43,15 @@ class "pedia_predict::psss::psss_habits.dart::_PsssHabitsState" {
   -List<dynamic> _frequencyOptions
   -Function _calculatedScore
   +void initState()
+  -StateNotifierProvider<PsssHabitsNotifier, PsssHabitsState> _getProvider()
   -void _openChoiceOverlay()
   -dynamic _savePsssHabits()
   -void _showResultScreen()
-  -void _validateAndSubmit()
+  -void _submit()
   +Widget build()
 }
 
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::psss::psss_habits.dart::_PsssHabitsState"
+"flutter_riverpod::src::consumer.dart::ConsumerState" <|-- "pedia_predict::psss::psss_habits.dart::_PsssHabitsState"
 
 class "pedia_predict::gradient_scaffold.dart::GradientScaffold" {
   +Widget body
@@ -63,14 +62,6 @@ class "pedia_predict::gradient_scaffold.dart::GradientScaffold" {
 
 "pedia_predict::gradient_scaffold.dart::GradientScaffold" o-- "flutter::src::widgets::framework.dart::Widget"
 "flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::gradient_scaffold.dart::GradientScaffold"
-
-class "pedia_predict::auth::signup_page.dart::SignUpPage" {
-  +DatabaseHelper dbHelper
-  +Widget build()
-}
-
-"pedia_predict::auth::signup_page.dart::SignUpPage" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::auth::signup_page.dart::SignUpPage"
 
 class "pedia_predict::auth::auth_page.dart::AuthPage" {
   +State<AuthPage> createState()
@@ -95,45 +86,6 @@ class "pedia_predict::auth::auth_page.dart::_AuthPageState" {
 "pedia_predict::auth::auth_page.dart::_AuthPageState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
 "flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::auth::auth_page.dart::_AuthPageState"
 
-class "pedia_predict::auth::login_page.dart::LoginPage" {
-  +DatabaseHelper dbHelper
-  +State<StatefulWidget> createState()
-}
-
-"pedia_predict::auth::login_page.dart::LoginPage" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::auth::login_page.dart::LoginPage"
-
-class "pedia_predict::auth::login_page.dart::_LoginPageState" {
-  -GlobalKey<FormState> _formKey
-  -bool _obscureText
-  -bool _rememberMe
-  -TextEditingController _usernameController
-  -TextEditingController _passwordController
-  -dynamic _submit()
-  +void dispose()
-  +Widget build()
-}
-
-"pedia_predict::auth::login_page.dart::_LoginPageState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
-"pedia_predict::auth::login_page.dart::_LoginPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::auth::login_page.dart::_LoginPageState"
-
-class "pedia_predict::auth::forgot_password_page.dart::ForgotPasswordPage" {
-  +DatabaseHelper dbHelper
-  +Widget build()
-}
-
-"pedia_predict::auth::forgot_password_page.dart::ForgotPasswordPage" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::auth::forgot_password_page.dart::ForgotPasswordPage"
-
-class "pedia_predict::firebase_options.dart::DefaultFirebaseOptions" {
-  {static} +FirebaseOptions android
-  {static} +FirebaseOptions ios
-  {static} +FirebaseOptions currentPlatform
-}
-
-"pedia_predict::firebase_options.dart::DefaultFirebaseOptions" o-- "firebase_core_platform_interface::firebase_core_platform_interface.dart::FirebaseOptions"
-
 class "pedia_predict::utils::database_helper.dart::DatabaseHelper" {
   {static} -DatabaseHelper _instance
   {static} -Database? _database
@@ -142,12 +94,8 @@ class "pedia_predict::utils::database_helper.dart::DatabaseHelper" {
   -dynamic _onCreate()
   +dynamic insertSdcModel()
   +dynamic insertSdcQuestion()
-  +dynamic insertEatingHabit()
   +dynamic insertRemainingTableQuestion()
   +dynamic deleteStudentById()
-  +dynamic deleteQuestionsBySdcId()
-  +dynamic deleteEatingQuestionsBySdcId()
-  +dynamic deleteRemainingTableQuestionsBySdcId()
   +dynamic getTableData()
   +dynamic getSdcCount()
   +dynamic getLatestSdcId()
@@ -156,6 +104,14 @@ class "pedia_predict::utils::database_helper.dart::DatabaseHelper" {
 
 "pedia_predict::utils::database_helper.dart::DatabaseHelper" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
 "pedia_predict::utils::database_helper.dart::DatabaseHelper" o-- "sqflite_common::sqlite_api.dart::Database"
+
+class "pedia_predict::utils::firebase_options.dart::DefaultFirebaseOptions" {
+  {static} +FirebaseOptions android
+  {static} +FirebaseOptions ios
+  {static} +FirebaseOptions currentPlatform
+}
+
+"pedia_predict::utils::firebase_options.dart::DefaultFirebaseOptions" o-- "firebase_core_platform_interface::firebase_core_platform_interface.dart::FirebaseOptions"
 
 class "pedia_predict::models::questions_model.dart::QuizQuestion" {
   +String text
@@ -316,36 +272,31 @@ class "pedia_predict::models::eating_model.dart::Category" {
 class "pedia_predict::questions_screen.dart::QuestionsScreen" {
   +int startIndex
   +int endIndex
-  +DatabaseHelper dbHelper
-  +dynamic pageTitle
-  +State<StatefulWidget> createState()
+  +String pageTitle
+  +ConsumerState<ConsumerStatefulWidget> createState()
 }
 
-"pedia_predict::questions_screen.dart::QuestionsScreen" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::questions_screen.dart::QuestionsScreen"
+"flutter_riverpod::src::consumer.dart::ConsumerStatefulWidget" <|-- "pedia_predict::questions_screen.dart::QuestionsScreen"
 
 class "pedia_predict::questions_screen.dart::_QuestionsScreenState" {
-  +Map<String, String> textAnswers
-  +Map<String, String> dropdownAnswers
   +Set<String> expandedQuestions
   +void initState()
-  +void initializeAnswers()
+  +dynamic initializeAnswers()
   +void handleDropdownAnswerChange()
-  +void handleTextAnswerChange()
   +dynamic saveAnswers()
+  +Widget determineNextPage()
   +Widget buildQuestion()
+  +void dispose()
   +Widget build()
 }
 
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::questions_screen.dart::_QuestionsScreenState"
+"flutter_riverpod::src::consumer.dart::ConsumerState" <|-- "pedia_predict::questions_screen.dart::_QuestionsScreenState"
 
 class "pedia_predict::delete_student.dart::DeleteStudent" {
-  +DatabaseHelper dbHelper
-  +State<StatefulWidget> createState()
+  +ConsumerState<ConsumerStatefulWidget> createState()
 }
 
-"pedia_predict::delete_student.dart::DeleteStudent" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::delete_student.dart::DeleteStudent"
+"flutter_riverpod::src::consumer.dart::ConsumerStatefulWidget" <|-- "pedia_predict::delete_student.dart::DeleteStudent"
 
 class "pedia_predict::delete_student.dart::_DeleteStudentState" {
   -dynamic _fetchStudents()
@@ -354,7 +305,7 @@ class "pedia_predict::delete_student.dart::_DeleteStudentState" {
   +Widget build()
 }
 
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::delete_student.dart::_DeleteStudentState"
+"flutter_riverpod::src::consumer.dart::ConsumerState" <|-- "pedia_predict::delete_student.dart::_DeleteStudentState"
 
 class "pedia_predict::main.dart::MyApp" {
   +Widget build()
@@ -363,45 +314,80 @@ class "pedia_predict::main.dart::MyApp" {
 "flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::main.dart::MyApp"
 
 class "pedia_predict::main.dart::AuthWrapper" {
-  +DatabaseHelper dbHelper
   +Widget build()
 }
 
-"pedia_predict::main.dart::AuthWrapper" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::main.dart::AuthWrapper"
+"flutter_riverpod::src::consumer.dart::ConsumerWidget" <|-- "pedia_predict::main.dart::AuthWrapper"
 
 class "pedia_predict::image_question.dart::ImageQuestion" {
-  +DatabaseHelper dbHelper
   +int ver
-  +State<StatefulWidget> createState()
+  +ConsumerState<ConsumerStatefulWidget> createState()
 }
 
-"pedia_predict::image_question.dart::ImageQuestion" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::image_question.dart::ImageQuestion"
+"flutter_riverpod::src::consumer.dart::ConsumerStatefulWidget" <|-- "pedia_predict::image_question.dart::ImageQuestion"
 
 class "pedia_predict::image_question.dart::_ImageQuestionState" {
-  -int? _selectedRating
   +String questionText
+  +void initState()
+  -dynamic _submitRating()
   +Widget build()
 }
 
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::image_question.dart::_ImageQuestionState"
+"flutter_riverpod::src::consumer.dart::ConsumerState" <|-- "pedia_predict::image_question.dart::_ImageQuestionState"
+
+class "pedia_predict::providers.dart::QuestionState" {
+  +Map<String, String> answers
+  +Map<String, TextEditingController> textControllers
+}
+
+class "pedia_predict::providers.dart::QuestionNotifier" {
+  +void setAnswer()
+  +TextEditingController? getController()
+  +void setController()
+  +void clearAnswers()
+  +void disposeAll()
+}
+
+"state_notifier::state_notifier.dart::StateNotifier" <|-- "pedia_predict::providers.dart::QuestionNotifier"
+
+class "pedia_predict::providers.dart::PsssHabitsState" {
+  +Map<dynamic, String> choices
+  +PsssHabitsState copyWith()
+}
+
+class "pedia_predict::providers.dart::PsssHabitsNotifier" {
+  +void setChoice()
+  +void disposeAll()
+}
+
+"state_notifier::state_notifier.dart::StateNotifier" <|-- "pedia_predict::providers.dart::PsssHabitsNotifier"
+
+class "pedia_predict::providers.dart::ImageSelectionState" {
+  +int? selectedRating
+}
+
+class "pedia_predict::providers.dart::ImageSelectionNotifier" {
+  +void setSelectedRating()
+  +void disposeAll()
+}
+
+"state_notifier::state_notifier.dart::StateNotifier" <|-- "pedia_predict::providers.dart::ImageSelectionNotifier"
+
+class "pedia_predict::providers.dart::ProviderManager" {
+  {static} +void resetAllProviders()
+}
 
 class "pedia_predict::home_page.dart::HomePage" {
-  +DatabaseHelper dbHelper
   +Widget build()
 }
 
-"pedia_predict::home_page.dart::HomePage" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::home_page.dart::HomePage"
+"flutter_riverpod::src::consumer.dart::ConsumerWidget" <|-- "pedia_predict::home_page.dart::HomePage"
 
 class "pedia_predict::sdc::sdc_page.dart::SdcPage" {
-  +DatabaseHelper dbHelper
-  +State<StatefulWidget> createState()
+  +ConsumerState<ConsumerStatefulWidget> createState()
 }
 
-"pedia_predict::sdc::sdc_page.dart::SdcPage" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::sdc::sdc_page.dart::SdcPage"
+"flutter_riverpod::src::consumer.dart::ConsumerStatefulWidget" <|-- "pedia_predict::sdc::sdc_page.dart::SdcPage"
 
 class "pedia_predict::sdc::sdc_page.dart::_SdcPageState" {
   -GlobalKey<FormState> _formKey
@@ -429,66 +415,13 @@ class "pedia_predict::sdc::sdc_page.dart::_SdcPageState" {
 
 "pedia_predict::sdc::sdc_page.dart::_SdcPageState" o-- "flutter::src::widgets::framework.dart::GlobalKey<FormState>"
 "pedia_predict::sdc::sdc_page.dart::_SdcPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::sdc::sdc_page.dart::_SdcPageState"
-
-class "pedia_predict::build_card.dart::ContainerOne" {
-  +String text1
-  +String text2
-  +Widget build()
-}
-
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::build_card.dart::ContainerOne"
+"flutter_riverpod::src::consumer.dart::ConsumerState" <|-- "pedia_predict::sdc::sdc_page.dart::_SdcPageState"
 
 class "pedia_predict::data::sdc_data.dart::SdcData" {
   {static} +Map<int, List<double>> maleMap
   {static} +Map<int, List<double>> femaleMap
   {static} -Map<int, List<double>> _parseCsvToMap()
 }
-
-class "pedia_predict::eating::eating_result.dart::EatingResult" {
-  +int eatingScore
-  +DatabaseHelper dbHelper
-  +Widget build()
-}
-
-"pedia_predict::eating::eating_result.dart::EatingResult" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "pedia_predict::eating::eating_result.dart::EatingResult"
-
-class "pedia_predict::eating::eating_habits.dart::EatingHabits" {
-  +DatabaseHelper dbHelper
-  +State<StatefulWidget> createState()
-}
-
-"pedia_predict::eating::eating_habits.dart::EatingHabits" o-- "pedia_predict::utils::database_helper.dart::DatabaseHelper"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::eating::eating_habits.dart::EatingHabits"
-
-class "pedia_predict::eating::eating_habits.dart::_EatingHabitsState" {
-  +EatingModel eatingData
-  -void _openChoiceOverlay()
-  -dynamic _saveEatingHabits()
-  -void _showEatingResultScreen()
-  +Widget build()
-}
-
-"pedia_predict::eating::eating_habits.dart::_EatingHabitsState" o-- "pedia_predict::models::eating_model.dart::EatingModel"
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::eating::eating_habits.dart::_EatingHabitsState"
-
-class "pedia_predict::eating::eating_choice.dart::EatingChoice" {
-  +Category category
-  +State<StatefulWidget> createState()
-}
-
-"pedia_predict::eating::eating_choice.dart::EatingChoice" o-- "pedia_predict::models::eating_model.dart::Category"
-"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "pedia_predict::eating::eating_choice.dart::EatingChoice"
-
-class "pedia_predict::eating::eating_choice.dart::_EatingChoiceState" {
-  -Map<int, String> _selectedFrequencies
-  -String? _errorMessage
-  +void initState()
-  +Widget build()
-}
-
-"flutter::src::widgets::framework.dart::State" <|-- "pedia_predict::eating::eating_choice.dart::_EatingChoiceState"
 
 
 @enduml

@@ -9,9 +9,7 @@ class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
   @override
-  State<AuthPage> createState() {
-    return _AuthPageState();
-  }
+  State<AuthPage> createState() => _AuthPageState();
 }
 
 class _AuthPageState extends State<AuthPage> {
@@ -26,9 +24,7 @@ class _AuthPageState extends State<AuthPage> {
   void _submit() async {
     final isValid = _form.currentState!.validate();
 
-    if (!isValid) {
-      return;
-    }
+    if (!isValid) return;
 
     _form.currentState!.save();
 
@@ -40,9 +36,7 @@ class _AuthPageState extends State<AuthPage> {
         await _firebase.sendPasswordResetEmail(email: _enteredEmail);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Password reset email sent.'),
-            ),
+            const SnackBar(content: Text('Password reset email sent.')),
           );
         }
       } else if (_isLogin) {
@@ -50,7 +44,6 @@ class _AuthPageState extends State<AuthPage> {
             email: _enteredEmail, password: _enteredPassword);
         debugPrint("Login successful");
 
-        // Delay to ensure Firebase updates the auth state
         await Future.delayed(const Duration(seconds: 1));
 
         if (mounted) {
@@ -69,7 +62,6 @@ class _AuthPageState extends State<AuthPage> {
         });
         debugPrint("Sign up successful");
 
-        // Delay to ensure Firebase updates the auth state
         await Future.delayed(const Duration(seconds: 1));
 
         if (mounted) {
@@ -128,15 +120,12 @@ class _AuthPageState extends State<AuthPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
-                          decoration:
-                              const InputDecoration(labelText: 'Email Address'),
+                          decoration: const InputDecoration(labelText: 'Email Address'),
                           keyboardType: TextInputType.emailAddress,
                           autocorrect: false,
                           textCapitalization: TextCapitalization.none,
                           validator: (value) {
-                            if (value == null ||
-                                value.trim().isEmpty ||
-                                !value.contains('@')) {
+                            if (value == null || value.trim().isEmpty || !value.contains('@')) {
                               return 'Please enter a valid email address.';
                             }
                             return null;
@@ -147,13 +136,10 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         if (!_isLogin && !_isForgotPassword)
                           TextFormField(
-                            decoration:
-                                const InputDecoration(labelText: 'Username'),
+                            decoration: const InputDecoration(labelText: 'Username'),
                             enableSuggestions: false,
                             validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  value.trim().length < 4) {
+                              if (value == null || value.isEmpty || value.trim().length < 4) {
                                 return 'Please enter at least 4 characters.';
                               }
                               return null;
@@ -164,8 +150,7 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         if (!_isForgotPassword)
                           TextFormField(
-                            decoration:
-                                const InputDecoration(labelText: 'Password'),
+                            decoration: const InputDecoration(labelText: 'Password'),
                             obscureText: true,
                             validator: (value) {
                               if (value == null || value.trim().length < 6) {
@@ -184,9 +169,7 @@ class _AuthPageState extends State<AuthPage> {
                           ElevatedButton(
                             onPressed: _submit,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
+                              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                             ),
                             child: Text(_isForgotPassword
                                 ? 'Reset Password'
@@ -197,9 +180,7 @@ class _AuthPageState extends State<AuthPage> {
                         if (!_isAuthenticating && !_isForgotPassword)
                           TextButton(
                             onPressed: _toggleMode,
-                            child: Text(_isLogin
-                                ? 'Create an account'
-                                : 'I already have an account'),
+                            child: Text(_isLogin ? 'Create an account' : 'I already have an account'),
                           ),
                         if (!_isAuthenticating && _isLogin)
                           TextButton(

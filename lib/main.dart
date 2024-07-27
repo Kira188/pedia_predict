@@ -80,21 +80,20 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedia_predict/home_page.dart';
 import 'package:pedia_predict/auth/auth_page.dart';
-import 'package:pedia_predict/utils/database_helper.dart';
-import 'package:pedia_predict/firebase_options.dart';
+import 'package:pedia_predict/utils/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -102,29 +101,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseHelper dbHelper = DatabaseHelper();
-
     return MaterialApp(
       title: 'Pedia Predict',
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
-      home: AuthWrapper(dbHelper: dbHelper),
+      home: const AuthWrapper(),
       routes: {
         '/login': (context) => const AuthPage(),
-        '/home': (context) => HomePage(dbHelper: dbHelper),
+        '/home': (context) => const HomePage(),
       },
     );
   }
 }
 
-class AuthWrapper extends StatelessWidget {
-  final DatabaseHelper dbHelper;
-
-  const AuthWrapper({super.key, required this.dbHelper});
+class AuthWrapper extends ConsumerWidget {
+  const AuthWrapper({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
@@ -136,7 +131,7 @@ class AuthWrapper extends StatelessWidget {
           if (user == null) {
             return const AuthPage();
           } else {
-            return HomePage(dbHelper: dbHelper);
+            return const HomePage();
           }
         } else {
           return const Center(child: CircularProgressIndicator());

@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
 import 'package:pedia_predict/models/sdc_model.dart';
 import 'package:pedia_predict/data/sdc_data.dart';
-import 'package:pedia_predict/utils/database_helper.dart';
 import 'package:pedia_predict/questions_screen.dart';
+import 'package:pedia_predict/providers.dart';
 
-class SdcPage extends StatefulWidget {
-  final DatabaseHelper dbHelper;
-
-  const SdcPage({super.key, required this.dbHelper});
+class SdcPage extends ConsumerStatefulWidget {
+  const SdcPage({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  ConsumerState<ConsumerStatefulWidget> createState() {
     return _SdcPageState();
   }
 }
 
-class _SdcPageState extends State<SdcPage> {
+class _SdcPageState extends ConsumerState<SdcPage> {
   final _formKey = GlobalKey<FormState>();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
@@ -87,7 +86,8 @@ class _SdcPageState extends State<SdcPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
+  
+    final dbHelper = ref.read(databaseHelperProvider);
     final weight = double.parse(_weightController.text);
     final height = double.parse(_heightController.text);
     final birthDate = _selectedDate!;
@@ -121,21 +121,8 @@ class _SdcPageState extends State<SdcPage> {
       _sdcDataList.add(sdcData);
     });
 
-    await widget.dbHelper.insertSdcModel(sdcData);
+    await dbHelper.insertSdcModel(sdcData);
 
-    // _weightController.clear();
-    // _heightController.clear();
-    // _ageController.clear();
-    // _schoolNameController.clear();
-    // _fullNameController.clear();
-    // _classSectionController.clear();
-    // _addressController.clear();
-    // _talukController.clear();
-    // _districtController.clear();
-    // setState(() {
-    //   _gender = null;
-    //   _selectedDate = null;
-    // });
     if (mounted) {
       showDialog(
         context: context,
@@ -150,10 +137,9 @@ class _SdcPageState extends State<SdcPage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return QuestionsScreen(
+                    return const QuestionsScreen(
                       pageTitle: "Part A",
-                      //ends at Is anybody in the family suffering from thyroid dysfunction
-                        startIndex: 0, endIndex: 11, dbHelper: widget.dbHelper);
+                      startIndex: 0, endIndex: 11);
                   }));
                 },
               ),
@@ -215,21 +201,21 @@ class _SdcPageState extends State<SdcPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       _buildTextField(_schoolNameController,
-                          'Name of the School', TextInputType.text),
+                          'Name of the School', TextInputType.text, false),
                       _buildTextField(_districtController,
-                          'Enter School District', TextInputType.text),
+                          'Enter School District', TextInputType.text, false),
                       _buildTextField(_talukController, 'Enter School Taluk',
-                          TextInputType.text),
+                          TextInputType.text, false),
                       _buildTextField(
-                          _fullNameController, 'Full Name', TextInputType.text),
+                          _fullNameController, 'Full Name', TextInputType.text, true),
                       _buildTextField(_classSectionController,
-                          'Class and Section', TextInputType.text),
+                          'Class and Section', TextInputType.text, false),
                       _buildTextField(
-                          _addressController, 'Address', TextInputType.text),
+                          _addressController, 'Address', TextInputType.text, false),
                       _buildTextField(
-                          _weightController, 'Weight (kg)', TextInputType.text),
+                          _weightController, 'Weight (kg)', TextInputType.number, true),
                       _buildTextField(
-                          _heightController, 'Height (m)', TextInputType.text),
+                          _heightController, 'Height (m)', TextInputType.number, true),
                       Row(
                         children: [
                           Expanded(
@@ -293,8 +279,12 @@ class _SdcPageState extends State<SdcPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String labelText,
-      TextInputType keyboardType) {
+  Widget _buildTextField(
+    TextEditingController controller, 
+    String labelText,
+    TextInputType keyboardType,
+    bool isRequired
+  ) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -302,8 +292,11 @@ class _SdcPageState extends State<SdcPage> {
         labelText: labelText,
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        if (isRequired && (value == null || value.isEmpty)) {
           return 'Please enter your $labelText';
+        }
+        else if(!isRequired && (value == null || value.isEmpty)){
+          controller.text = '';
         }
         return null;
       },

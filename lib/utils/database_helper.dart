@@ -62,16 +62,6 @@ class DatabaseHelper {
     ''');
 
     await db.execute('''
-      CREATE TABLE eating_questions(
-        sdc_id INTEGER,
-        question TEXT,
-        answer TEXT,
-        FOREIGN KEY (sdc_id) REFERENCES student(id) ON DELETE CASCADE,
-        UNIQUE(sdc_id, question)
-      )
-    ''');
-
-    await db.execute('''
       CREATE TABLE remaining_table_questions(
         sdc_id INTEGER,
         question TEXT,
@@ -81,81 +71,8 @@ class DatabaseHelper {
       )
     ''');
   }
-// CODE FOR INSERTING THAT DIDNT WORK
-//   Future<int> insertSdcModel(SdcModel sdcModel) async {
-//     Database db = await database;
-
-//     // Check if the student ID already exists using MAX
-//     if (sdcModel.id != null) {
-//       int? maxId = Sqflite.firstIntValue(await db.rawQuery(
-//               'SELECT MAX(id) FROM student WHERE id = ?', [sdcModel.id]));
-//       if (maxId != null) {
-//         await deleteStudentById(sdcModel.id!);
-//       }
-//     }
-
-//     return await db.insert(
-//       'student',
-//       sdcModel.toMap(),
-//       conflictAlgorithm: ConflictAlgorithm.replace,
-//     );
-//   }
-
-//   Future<int> insertSdcQuestion(int sdcId, String question, String answer) async {
-//   Database db = await database;
-
-//   // Check if the sdc_id already exists in questions table using MAX
-//   int? maxSdcId = Sqflite.firstIntValue(await db.rawQuery(
-//     'SELECT MAX(sdc_id) FROM questions WHERE sdc_id = ?', [sdcId]
-//   ));
-//   if (maxSdcId != null) {
-//     await deleteQuestionsBySdcId(sdcId);
-//   }
-
-//   return await db.insert('questions', {
-//     'sdc_id': sdcId,
-//     'question': question,
-//     'answer': answer,
-//   });
-// }
-
-//   Future<int> insertEatingHabit(int sdcId, String question, String answer) async {
-//   Database db = await database;
-
-//   // Check if the sdc_id already exists in eating_questions table using MAX
-//   int? maxSdcId = Sqflite.firstIntValue(await db.rawQuery(
-//     'SELECT MAX(sdc_id) FROM eating_questions WHERE sdc_id = ?', [sdcId]
-//   ));
-//   if (maxSdcId != null) {
-//     await deleteEatingQuestionsBySdcId(sdcId);
-//   }
-
-//   return await db.insert('eating_questions', {
-//     'sdc_id': sdcId,
-//     'question': question,
-//     'answer': answer,
-//   });
-// }
-
-//   Future<int> insertRemainingTableQuestion(int sdcId, String question, String answer) async {
-//   Database db = await database;
-
-//   // Check if the sdc_id already exists in remaining_table_questions table using MAX
-//   int? maxSdcId = Sqflite.firstIntValue(await db.rawQuery(
-//     'SELECT MAX(sdc_id) FROM remaining_table_questions WHERE sdc_id = ?', [sdcId]
-//   ));
-//   if (maxSdcId != null) {
-//     await deleteRemainingTableQuestionsBySdcId(sdcId);
-//   }
-
-//   return await db.insert('remaining_table_questions', {
-//     'sdc_id': sdcId,
-//     'question': question,
-//     'answer': answer,
-//   });
-// }
   Future<int> insertSdcModel(SdcModel sdcModel) async {
-    Database db = await database;
+    final db = await database;
     return await db.insert(
       'student',
       sdcModel.toMap(),
@@ -163,25 +80,10 @@ class DatabaseHelper {
     );
   }
 
-  Future<int> insertSdcQuestion(
-      int sdcId, String question, String answer) async {
-    Database db = await database;
+  Future<int> insertSdcQuestion(int sdcId, String question, String answer) async {
+    final db = await database;
     return await db.insert(
       'questions',
-      {
-        'sdc_id': sdcId,
-        'question': question,
-        'answer': answer,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<int> insertEatingHabit(
-      int sdcId, String question, String answer) async {
-    Database db = await database;
-    return await db.insert(
-      'eating_questions',
       {
         'sdc_id': sdcId,
         'question': question,
@@ -212,37 +114,8 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    await deleteQuestionsBySdcId(id);
-    //await deleteEatingQuestionsBySdcId(id);
-    await deleteRemainingTableQuestionsBySdcId(id);
   }
 
-  Future<void> deleteQuestionsBySdcId(int sdcId) async {
-    final db = await database;
-    await db.delete(
-      'questions',
-      where: 'sdc_id = ?',
-      whereArgs: [sdcId],
-    );
-  }
-
-  Future<void> deleteEatingQuestionsBySdcId(int sdcId) async {
-    final db = await database;
-    await db.delete(
-      'eating_questions',
-      where: 'sdc_id = ?',
-      whereArgs: [sdcId],
-    );
-  }
-
-  Future<void> deleteRemainingTableQuestionsBySdcId(int sdcId) async {
-    final db = await database;
-    await db.delete(
-      'remaining_table_questions',
-      where: 'sdc_id = ?',
-      whereArgs: [sdcId],
-    );
-  }
 
   Future<List<Map<String, dynamic>>> getTableData(String tableName) async {
     final db = await database;
@@ -261,6 +134,19 @@ class DatabaseHelper {
     final result = await db.rawQuery('SELECT MAX(id) as id FROM student');
     return result.first['id'] as int? ?? 0;
   }
+//   Future<String?> getSdcQuestionAnswer(int sdcId, String question) async {
+//   final db = await database;
+//   final result = await db.query(
+//     'questions',
+//     columns: ['answer'],
+//     where: 'sdc_id = ? AND question = ?',
+//     whereArgs: [sdcId, question],
+//   );
+//   if (result.isNotEmpty) {
+//     return result.first['answer'] as String;
+//   }
+//   return null;
+// }
 
   Future<void> exportDatabaseToExcel() async {
   final db = await database;
@@ -288,20 +174,6 @@ class DatabaseHelper {
         questionsData.first.keys.map((key) => TextCellValue(key)).toList());
     for (var row in questionsData) {
       questionsSheet.appendRow(
-          row.values.map((value) => TextCellValue(value.toString())).toList());
-    }
-  }
-
-  // Export eating_questions table
-  var eatingQuestionsSheet = excel['Eating Questions'];
-  List<Map<String, dynamic>> eatingQuestionsData =
-      await db.query('eating_questions');
-  if (eatingQuestionsData.isNotEmpty) {
-    eatingQuestionsSheet.appendRow(eatingQuestionsData.first.keys
-        .map((key) => TextCellValue(key))
-        .toList());
-    for (var row in eatingQuestionsData) {
-      eatingQuestionsSheet.appendRow(
           row.values.map((value) => TextCellValue(value.toString())).toList());
     }
   }

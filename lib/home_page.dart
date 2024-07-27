@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedia_predict/delete_student.dart';
 import 'package:pedia_predict/gradient_scaffold.dart';
 import 'package:pedia_predict/sdc/sdc_page.dart';
-import 'package:pedia_predict/utils/database_helper.dart';
+import 'package:pedia_predict/providers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatelessWidget {
-  final DatabaseHelper dbHelper;
-  const HomePage({super.key, required this.dbHelper});
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dbHelper = ref.read(databaseHelperProvider);
+    
     return GradientScaffold(
       showBackButton: false,
       appBarText: "Pedia Predict",
@@ -28,11 +31,11 @@ class HomePage extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           debugPrint("New Student Add Tap");
+                          ProviderManager.resetAllProviders(ref);
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SdcPage(dbHelper: dbHelper)));
+                            context,
+                            MaterialPageRoute(builder: (context) => const SdcPage()),
+                          );
                         },
                         child: Card(
                           color: const Color.fromARGB(255, 238, 198, 150),
@@ -60,7 +63,6 @@ class HomePage extends StatelessWidget {
                         onTap: () async {
                           debugPrint("Export to Excel Tap");
                           await dbHelper.exportDatabaseToExcel();
-
                           if (context.mounted) {
                             showDialog(
                               context: context,
@@ -107,10 +109,11 @@ class HomePage extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      DeleteStudent(dbHelper: dbHelper)));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DeleteStudent(),
+                            ),
+                          );
                         },
                         child: Card(
                           color: const Color.fromARGB(255, 238, 198, 150),
